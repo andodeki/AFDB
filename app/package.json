@@ -1,0 +1,45 @@
+{
+  "name": "actionable-findings-database",
+  "private": true,
+  "scripts": {
+    "start": "meteor run --port 5000",
+    "test": "meteor test --once --driver-package meteortesting:mocha ==port 5100",
+    "test-app": "TEST_WATCH=1 MOCHA_TIMEOUT=20000 meteor test --full-app --driver-package meteortesting:mocha --port 5100",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.14.8",
+    "@smui/button": "^6.0.0-beta.14",
+    "@smui/list": "^6.0.0-beta.14",
+    "bcrypt": "^5.0.1",
+    "canvas": "^2.9.0",
+    "doi-regex": "^0.1.11",
+    "jquery": "^3.6.0",
+    "js-cookie": "^3.0.1",
+    "lodash": "^4.17.21",
+    "meteor-node-stubs": "^1.1.0",
+    "pdfjs-dist": "^2.12.313",
+    "pluralize": "^8.0.0",
+    "sanitize-filename": "^1.6.3",
+    "svelte": "^3.46.4",
+    "svelte-read-more": "^0.2.1",
+    "sveltestrap": "^5.8.5",
+    "tinro": "^0.6.10"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "@smui/menu": "^6.0.0-beta.14",
+    "@smui/textfield": "^6.0.0-beta.13",
+    "chai": "^4.3.4",
+    "rollup": "^2.67.2",
+    "sv-bootstrap-dropdown": "^0.4.4",
+    "svelte-dark-mode": "^2.1.0",
+    "svelte-toolbox": "^0.6.1"
+  }
+}

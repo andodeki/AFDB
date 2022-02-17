@@ -1,0 +1,789 @@
+<!--This webpage serves as the documentation for this project. Please read this carefully before you start to work on this project.-->
+<!--To see this file in your browser, run the command "open docs.html" in this directory.-->
+
+<head>
+  <title>AFDB Documentation</title>
+</head>
+
+<body>
+  <header class="header">
+    <h1>AFDB Documentation</h1>
+    <p class="tiny" id="date"></p>
+  </header>
+  <div class="column-container">
+    <div class="column left">
+      <div id="toc_container">
+        <h2 class="toc_title">Table of Contents</h2>
+        <ul class="toc_list">
+          <li>
+            <a href="#Project_Overview">Project Overview</a>
+            <ul>
+              <li>
+                <a href="#Introduction_and_Goals">Introduction and Goals</a>
+              </li>
+              <li><a href="#Actionable_Findings">Actionable Findings</a></li>
+              <li><a href="#Debunked_Myths">Debunked Myths</a></li>
+              <li>
+                <a href="#Nutritional_Composition">Nutritional Composition</a>
+              </li>
+              <li><a href="#Work_Pile"> Work Pile</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="#App_Architecture">App Architecture</a>
+            <ul>
+              <li><a href="#Astronomy_Classes">Astronomy Classes</a></li>
+              <li>
+                <a href="#Main_Objects,_Field_Containers,_and_Field_Objects"
+                  >Main Objects, Field Containers, and Field Objects</a
+                >
+              </li>
+              <li>
+                <a href="#Main_Object_API">Main Object API - an MVC approach</a>
+              </li>
+            </ul>
+          </li>
+          <li><a href="#Error_Throwing">Error Throwing</a></li>
+          <li><a href="#Testing">Testing</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="column center">
+      <div>
+        <h2 id="Project_Overview">Project Overview</h2>
+        <p>
+          This section aims to give a general overview of the project, its
+          goals, and its components.
+        </p>
+
+        <h3 id="Introduction_and_Goals">Introduction and Goals</h3>
+        <p>
+          The main goal of this project is to facilitate collaboration between
+          M.D.s in order for them to be able to create research-based actionable
+          findings linking different foods and health conditions. Their results
+          will be used to inform Actual Food's online ordering platform.
+        </p>
+
+        <h3 id="Actionable_Findings">Actionable Findings</h3>
+        <p>
+          Actionable Findings are research-based findings that link certain
+          foods to certain health conditions, and may or may not include
+          additional information about this link. An example would be
+          "Blueberries increase natural killer cell counts, reducing arterial
+          stiffness." (this is a random example, please don't quote me on this).
+          Here, the food involved is blueberries, the condition involved is
+          arterial stiffness, and the link is that of a reduction in symptoms.
+          Additionally, the mechanism is through an increase of natural killer
+          cell counts. This Actionable Finding could also include additional
+          information such as what populations are most affected by this
+          finding, in what doses does this apply, and more. The complete list of
+          Actionable Finding fields is still not final, but the project
+          wireframes provide an idea of what they could look like.
+        </p>
+
+        <h3 id="Debunked_Myths">Debunked Myths</h3>
+        <p>
+          Debunked Myths, like Actionable Findings, also link certain foods to
+          certain health conditions, and also may or may not include additional
+          information about this link. In terms of the app's implementation,
+          Debunked Myths share the same functionality and behavior as Actionable
+          Findings, differing only in what fields they may contain. The biggest
+          difference, is that Debunked Myths are meant to specifically address
+          links between certain foods and health conditions that exist in pop
+          culture or the world of nutrition as popular myths. Debunked Myths, as
+          the name suggests, aim to debunk these popular myths through research.
+        </p>
+
+        <h3 id="Nutritional_Composition">Nutritional Composition</h3>
+        <p>
+          The Nutritional Composition section of the app, provides information
+          about the nutritional contents of many food items. A lot of this data
+          will be pulled from a public database, but the application also allows
+          users to add their own nutritional composition findings.
+        </p>
+
+        <h3 id="Work_Pile">Work Pile</h3>
+        <p>
+          The Work Pile provides a user-friendly UX for the creation of
+          Actionable Findings, Debunked Myths, and Nutritional Composition
+          items. It allows users to see a shared pile of research papers that
+          need to be reviewed. While reviewing these papers, users have the
+          option of highlighting specific parts of the papers in order to create
+          Actionable Findings, Debunked Myths, or Nutritional Composition items.
+        </p>
+        <p>
+          Here, users can also add new research papers to the Work Pile for
+          review.
+        </p>
+      </div>
+      <div>
+        <h2 id="App_Architecture">App Architecture</h2>
+        <p>
+          This section will explore the overall architecture of the app.
+          Including the main patterns being used as well as the custom
+          implementation parts of the app.
+        </p>
+
+        <h3 id="Astronomy_Classes">Astronomy Classes</h3>
+        <p>
+          The app's data is stored in a Mongo database, as plain objects. Meteor
+          encourages developers to write Meteor methods to interact with these
+          objects. However, in more complex cases, it is useful to have
+          something more capable than a simple plain object that can be
+          interacted with through external methods. For our use case, it is also
+          useful for an object to be able to have its own methods that act on
+          itself, as well as lifecycle hooks, and pre-defined schema for
+          validation.
+        </p>
+        <p>
+          <a href="https://jagi.github.io/meteor-astronomy/">Astronomy</a> is a
+          Meteor package that introduces the model layer to Meteor, and it
+          allows objects to behave like class instances that can have their own
+          pre-defined schema, behaviors, events, and methods.
+        </p>
+
+        <h3 id="Main_Objects,_Field_Containers,_and_Field_Objects">
+          Main Objects, Field Containers, and Field Objects
+        </h3>
+        <p>
+          The app's architecture for Actionable Findings, Debunked Myths,
+          Sources, Health Conditions, Dietary Items, and all their respective
+          fields is based around Main Objects and Field Objects, which are
+          linked by Field Containers. These are all Astronomy models. This
+          architecture was created to allow for a edit-history system, where
+          each Main Object can have multiple different versions for each of
+          their editable fields.
+        </p>
+        <h4>Main Objects</h4>
+        <p>
+          Main Objects represent objects that have fields whose versions can be
+          changed. In this case, our app's Main Objects are Actionable Findings,
+          Debunked Myths, Sources, Health Conditions, and Dietary Items.
+        </p>
+        <p>
+          All Main Objects inherit from a parent Main Object Class, called
+          <code>mainObjectModel</code>, inside
+          <code>"/imports/api/mainObjects"</code>. This parent model defines
+          common properties, behaviors, and methods for all mainObjects.
+        </p>
+        <p>
+          The specific class definitions for Actionable Findings, Debunked
+          Myths, and other Main Objects can be found in the files
+          <code>"/imports/api/mainObjects/actionableFindingModel"</code>,
+          <code>"/imports/api/mainObjects/debunkedMythModel"</code>, and so on.
+          These child classes define what specific editable fields each model
+          has, as well as which of them are mandatory. You can access a Main
+          Object's type with <code>mainObject.type</code>. All Main Objects,
+          regardless of type are stored in the same
+          <code>"mainObjects"</code> collection, which is made available to the
+          client through a publication of the same name.
+        </p>
+
+        <h4>Field Objects</h4>
+        <p>
+          Field Objects represent editable fields on Main Objects, such as, for
+          example, a description on an Actionable Finding. The parent class for
+          all Field Object models is defined in
+          <code>"/imports/api/mainObjects/fields/fieldObjectModel"</code>. This
+          class defines the common top-level structure of all Field Objects,
+          which includes a Version object property and some methods to sync
+          author usernames. The Version object stores information about the
+          version number of a given Field Object, as well as authorship
+          information, an optional version note, and whether that version is a
+          reversion to a previous version (as well as what that previous version
+          is and who authored it). All Field Objects are stored in the
+          <code>"fieldObjects"</code> collection.
+        </p>
+        <p>
+          Each different Field Object has its own model that inherits from the
+          parent Field Object model. The specific child model for a Field Object
+          contains a <code>body</code> field, which is where the specific schema
+          of each field is defined. The body differs for each different field,
+          however, they must all have a <code>nA</code> property of the type
+          Boolean, that allows the Field Object to be marked as N/A. The default
+          value of the <code>nA</code> property should be <code>false</code>.
+        </p>
+
+        <h4>Field Containers</h4>
+        <p>
+          Field Containers act as a joiner model for Main Objects and Field
+          Objects. A Main Object has one Field Container per editable field.
+          Different versions of that field are represented as different Field
+          Objects that belong to a common Field Container. The model for all
+          Field Containers can be seen in
+          <code>"/imports/api/mainObjects/fields/fieldContainerModel"</code>.
+          Besides joining Main Objects and Field Objects, Field Containers also
+          store the current version of a field.
+        </p>
+
+        <h4>Versioning</h4>
+        <p>
+          The version of an editable Main Object field can be altered through
+          updates or reversions. Regardless of the operation, an edit to a field
+          will always create a new Field Object and increment the current
+          version number on the respective Field Container.
+        </p>
+
+        <p>
+          For example, If I create an Actionable Finding with a description,
+          that description will be considered as version 1 of the description
+          field. If I update it later, it will create a new Field Object with
+          the new description body and a Version object with a version number of
+          2. This will also update the current version number on the respective
+          Field Container to 2. This system is set up in a way that these
+          changes will be automatically and immediately reflected on the Main
+          Object, or in this case, the Actionable Finding.
+        </p>
+
+        <p>
+          Now, if I revert that same description back to version 1, it will
+          create a new Field Object with the same description body as version 1,
+          but with a different Version object with a property that marks it as a
+          reversion (<code>isReversion</code>) and a property that stores what
+          version this reversion refers to (<code>reversionNumber</code>). This
+          new Field Object will have the version number of 3, and the respective
+          Field Container will have its current version property updated to 3.
+          Again, this will be automatically and immediately reflected on the
+          Actionable Finding.
+        </p>
+
+        <p>
+          In summary, any edit to a field will always lead to a version number
+          increment, even reversions.
+        </p>
+
+        <p>
+          It's also worth noting that, if you try to revert to a reversion, the
+          current system will revert to the original version instead.
+        </p>
+
+        <h4>Modularity and Dicts</h4>
+        <p>
+          The app's frontend has been set up in a way such that all logic and
+          pages pertaining to Main Objects are only defined once for all types
+          of Main Objects, and the same is true for all Field Objects. As such,
+          there are multiple dictionaries (objects of simple key-value pairs)
+          throughout different files in the app that facilitate this
+          modularization, by linking different types of objects to their
+          respective values in different situations. A lot of these dictionaries
+          that are commonly accessed throughout the app, are found in the file
+          <code>"/imports/common/dicts"</code>, but those that are only used
+          once or that deal with file imports, are found in their respective
+          relevant files.
+        </p>
+        <p>
+          <i
+            >Note: I have looked into dynamic imports to simplify and
+            standardize the current setup with multiple import dicts in multiple
+            files. Unfortunately, due to the
+            <a href="https://github.com/sveltejs/svelte/issues/6702"
+              >limitations of Svelte's bundler</a
+            >, it is not possible to dynamically import variable modules
+            reliably, so we have to keep these multiple import dicts in their
+            respective files for the best stability.
+          </i>
+        </p>
+        <p>
+          <b>
+            In developing the app, whenever a new new Main Object or Field
+            Object type is created, it is crucial to go through all these
+            dictionaries (not only in <code>"/imports/common/dicts</code>) and
+            add key-value pairs for the new type. Therefore, when adding Main
+            Object or Field Object types, carefully check all files throughout
+            the app to make sure the dictionaries are up to date!
+          </b>
+        </p>
+        <p>
+          The purpose of the dictionaries inside
+          <code>"/imports/common/dicts"</code> is to facilitate modularization
+          and standardize associations. The
+          <code>mainObjectFieldsDict</code> and the
+          <code>mainObjectsMandatoryFieldsDict</code> define what editable
+          fields each different type of Main Object can have, and which of these
+          are mandatory, respectively. The difference is that non-mandatory
+          fields can be marked as N/A, while mandatory fields cannot. If you
+          make changes to these dictionaries directly, they will only be
+          reflected on new Main Objects, unless you reset the database.
+        </p>
+        <p>
+          The
+          <code>mainObjectNameDict</code> provides an easy way to convert
+          between a code-friendly Main Object type name, such as
+          <code>"actionableFindings"</code> to the human-presentable form
+          <code>"Actionable Finding"</code>.
+        </p>
+        <p>
+          The <code>fieldNameDict</code> does the same thing but for Field
+          Objects.
+        </p>
+        <p>
+          The <code>newFieldDict</code> provides template body objects for
+          creating new fields. These appear in the app when creating a new Main
+          Object and are meant to be completely empty. These must be filled out
+          by the user before submitting a new Main Object, as their empty
+          subfields will lead to validation errors.
+        </p>
+        <p>
+          The <code>nAFieldDict</code> provides a template for the body of a
+          field initialized as N/A. The purpose is to have a body that is stored
+          for an N/A field that is essentially empty but won't lead to any
+          validation errors.
+        </p>
+        <p>
+          The <code>testFieldDict</code>, <code>testFieldDict2</code>, and
+          <code>testFieldDict3</code> dictionaries provide sample filled-out
+          field bodies to be used in tests.
+        </p>
+        <p>
+          All dictionaries in this file are frozen (read-only) using
+          <code>Object.freeze()</code>, which prevents these dictionaries from
+          being edited from the outside. This is done because these dictionaries
+          essentially act as global variables, and it would be dangerous to not
+          enforce a read-only structure as editing these dictionaries in other
+          files could lead to all sorts of unexpected and hard to debug
+          behavior.
+        </p>
+        <p>
+          In JS, trying to edit a frozen Object won't throw any errors, but it
+          won't work either. If you're trying to edit these dictionaries in
+          another file, make a copy of them instead using
+          <code>{...dictionaryName}</code> for a shallow copy or
+          <code>_.cloneDeep(dictionaryName)</code> for a deep copy (requires the
+          <a href="https://lodash.com/">lodash</a> package).
+        </p>
+
+        <h4>Adding a Field Object</h4>
+        <p>
+          The modular architecture was implemented to make the process of adding
+          new Field Objects simpler for developers. If followed correctly, any
+          new Field Object will automatically show up in the Create and Show
+          pages for the Main Objects they're found in, all the editing and
+          reversion logic will work on them as expected, and a suite of tests
+          will be automatically generated for the new field to check that all
+          user operations work as expected with it.
+        </p>
+
+        <p>
+          Here's how you can easily create a new Field Object for this
+          application:
+        </p>
+        <p>
+          <i>Backend process:</i>
+        </p>
+        <p>
+          <b
+            >Note: There are many important details in steps 1-5 that must be
+            followed exactly in order for the new Field Object to work correctly
+            with the rest of the application. Therefore, it is strongly
+            recommended that you create your new field by copying the model file
+            of an existing Field Object and modify it to your needs by changing
+            the names and the <code>body</code> class. Still, read through these
+            steps to make sure your new Field Object model file is formatted
+            correctly.
+          </b>
+        </p>
+        <ol>
+          <li>
+            <p>
+              Start by creating a model file for your new field, which will
+              contain the Astronomy class definition for this new field. Create
+              your file in the
+              <code>"/imports/api/mainObjects/fields"</code> directory and
+              follow the naming convention of <code>"fieldNameModel.js"</code>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Inside this file, import <code>{ Class }</code> from
+              <code>"meteor/jagi:astronomy"</code>,
+              <code> { FieldObjects } </code> from
+              <code>"/imports/db/collections"</code>, and
+              <code>{ FieldObject }</code>from
+              <code>"./fieldObjectModel"</code>
+            </p>
+          </li>
+          <li>
+            <p>
+              Still inside the same file, create a class (in the form of an
+              exported const) that inherits from <code>Field Object</code>. This
+              class should have a <code>name</code> property that contains a
+              camelCased and singular name for the new field, a
+              <code>collection</code> property that has the value of
+              <code> FieldObjects </code>, and a <code>fields</code> property
+              that should be an object with a property of <code>body</code>.
+            </p>
+          </li>
+          <li>
+            <p>
+              The value for the <code>body</code> property should be another
+              Astronomy class defined in the same file, with a
+              <code>name</code> property with the value of a string in the
+              format of "fieldNameBody", and a <code>fields</code> property that
+              should be an object that defines the specific schema of this new
+              field, following the syntax used to create schema in Astronomy.
+              <b>
+                Make sure that the first property you define inside
+                <code>body</code> is a field called <code>nA</code>, of the type
+                <code>Boolean</code>, and that has a default value of a function
+                that returns <code>false</code>.</b
+              >
+            </p>
+          </li>
+          <li>
+            <p>
+              If you'd like to add any custom lifecycle behavior to your field
+              object, including extra verification behaviors that go beyond what
+              the schema allows, add some Astronomy events on the Field Object
+              class or the Field Object Body Class. Here is a
+              <a href="https://jagi.github.io/meteor-astronomy/#events-list"
+                >list of lifecycle events for Astronomy models</a
+              >. For anything to do with extra verification or
+              changing/generating values on creating and updating objects, I
+              recommend the <code>beforeSave</code> event.
+            </p>
+          </li>
+          <li>
+            Once the model file for your new Field Object is created, go into
+            <code>"/imports/common/dicts"</code>, and add the name of your new
+            field inside <code>mainObjectFieldsDict</code> and
+            <code>mainObjectMandatoryFieldsDict</code>, associating your new
+            field to your desired Main Object(s).
+            <b
+              >Note that mandatory fields must be included in both
+              dictionaries!</b
+            >
+            <b>
+              Also note that the name you use for your new field in these
+              dictionaries should be the same as the <code>name</code> property
+              you defined in the field's class (camelCased and singular).
+            </b>
+          </li>
+          <li>
+            Proceed to fill out all field dicts with the correct information for
+            your new field. Ensure that you follow the schema you defined in
+            your model file.
+          </li>
+          <li>
+            Go into <code>"imports/api/mainObjects"</code> and find the model
+            files for the Main Objects that you want to include your new field.
+            In these files, add your new field as a Main Object field (inside
+            the <code>fields</code> property) in the following format:
+            <pre class="code-block">
+<code>
+newFieldName: { 
+  type: FieldObject, 
+  optional: true, 
+}
+</code>
+            </pre>
+            <b
+              >It's important to set <code>optional</code> to <code>true</code>,
+              even if your field is mandatory in a given Main Object. This is
+              due to how the initialization logic for new Main Objects is
+              handled. The enforcement of mandatory/non-mandatory is done
+              instead through the client-available Meteor Methods for Main
+              Objects.</b
+            >
+          </li>
+          <li>
+            Go into <code>"/imports/api/mainObjects/mainObjectModel"</code> and
+            import your new Field Object model file there. Add a key-value pair
+            inside <code>fieldTypeDict</code> at the top of the file, with the
+            key being your new field's camelCased singular name, and the value
+            being your field's import.
+          </li>
+          <li>
+            Do the same thing you just did but inside
+            <code>"/tests/mainObjectHelpersTests"</code>, that is, importing
+            your new field's model file and adding a key-value pair of the
+            field's name and import in the <code>fieldTypeDict</code>.
+          </li>
+          <li>
+            <p>
+              At this stage, your new field should be ready for testing. Run the
+              test suite using the command <code>npm run test-app</code> inside
+              the <code>app</code> directory. If all tests passed successfully,
+              then congratulations! Your new field has been correctly added to
+              the application's backend.
+            </p>
+            <p>
+              However, if tests are failing, carefully read the test failure
+              messages and try to figure out what went wrong. Re-read steps 1-9
+              to make sure you followed the process correctly.
+            </p>
+            <b
+              >Note: Occasionally, it is possible that you will run into a
+              <code>timeOut</code> error when running tests. This does not
+              indicate a code failure, but rather, that the process of running a
+              test exceeded Mocha's (testing package) timeout limit. You can fix
+              this by increasing the <code>MOCHA_TIMEOUT</code> environment
+              variable in <code>package.json</code>.
+            </b>
+          </li>
+        </ol>
+        <p>
+          <i>Frontend process:</i>
+        </p>
+        <b
+          >Note: Only go through the frontend process to add a new field once
+          you've successfully finished adding it on the backend!</b
+        >
+        <p>
+          The process of adding your new field to the application's frontend
+          consists in creating a couple of render files and going through
+          another couple of files to make sure the new field is imported and
+          added to dictionaries where necessary.
+        </p>
+        <ol>
+          <li>
+            Go to <code>"/imports/ui/mainObjects/fields"</code>. Inside this
+            directory, create a new folder with your new field's name.
+          </li>
+          <li>
+            <p>
+              Inside your new directory, make a <code>Create</code> file and a
+              <code>Show</code> file for your new field. The
+              <code>Create</code> file determines how your field will be
+              displayed when creating a new Main Object with this field, or
+              editing this field on an existing Main Object. The
+              <code>Show</code> file determines how your field will be displayed
+              in every other regular situation.
+            </p>
+            <p>
+              Go ahead and fill out these files following the existing structure
+              in other field <code>Create</code> and <code>Show</code> files.
+              You should only have to modify the parts where your field's
+              properties are displayed.
+              <b
+                >Therefore, it is strongly recommended that you copy these two
+                files from another existing field and modify the rendering to
+                fit your new field's specific properties.</b
+              >
+            </p>
+          </li>
+          <li>
+            Go into the file <code>"/imports/ui/mainObjects/fields/Field"</code>
+            and import your new field's show and create pages. Add your new
+            field's name, alongside the correct imports inside
+            <code>fieldShowDict</code> and <code>fieldCreateDict</code>.
+          </li>
+          <li>
+            Finally, go into the file
+            <code>"/imports/ui/mainObjects/Create"</code>, and import your new
+            field's create page. Add your new field's name alongside its create
+            page import inside the <code>fieldCreateDict</code>.
+          </li>
+          <li>
+            <p>
+              At the moment, there are no formal tests for the app's frontend
+              UI, so go ahead and test your new field's UI manually by trying to
+              create a new Main Object with your new field, editing it,
+              reverting it, and marking it as N/A.
+            </p>
+            <p>
+              If everything is working as expected, then congratulations, you
+              finished adding your new field to the application!
+            </p>
+          </li>
+        </ol>
+        <h3 id="Main_Object_API">Main Object API - an MVC approach</h3>
+        <p>
+          All the logic to interact with Main Objects and their respective Field
+          Objects has been implemented using an
+          <a
+            href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"
+            >MVC pattern</a
+          >. An MVC pattern stands for "Model, View, Controller".
+        </p>
+        <p>
+          A "Model" is where an object's logic resides, including its own
+          private methods, behaviors, and lifecycle hooks. In this case, the
+          files inside
+          <code>"/imports/api/mainObjects"</code> and
+          <code>"/imports/api/mainObjects/fields"</code> define the models for
+          Main Objects and Field Objects (as well as Field Containers) in our
+          application. More specifically, the file
+          <code>"/imports/api/mainObjects/mainObjectModel"</code> contains the
+          vast majority of the logic pertaining to Main Objects and their
+          interactions with Field Objects and Field Containers. This logic can
+          be seen specifically in the helper methods defined inside the Main
+          Object model, as these methods deal with operations including creating
+          new Field Objects, editing fields, reverting fields, and syncing these
+          with their parent Main Object.
+        </p>
+
+        <p>
+          However, these helper methods are only accessible from the server. In
+          order for the client to interact with these models, they must go
+          through a "controller" API that defines certain methods that can be
+          called from the client to act on Main Object Models and their
+          associated fields. The purpose of this extra communication step is
+          mainly to ensure that a user on the client is authorized to perform
+          operations on Main Object Models, but also to abstract the model logic
+          into a simpler and client-friendly API.
+        </p>
+
+        <p>
+          This client-accessible API can be found inside the file
+          <code>"/imports/api/mainObjectMethods"</code>, which defines multiple
+          Meteor Methods for the client to interact with Main Objects and their
+          fields in the server. This file includes a description of each method,
+          as well as what arguments they take, and what they return.
+        </p>
+
+        <p>
+          The "views" component of this pattern can be seen inside the
+          <code>"/imports/ui/mainObjects"</code> folder, where rendering files
+          are defined to display the Main Object models and their fields to the
+          client.
+        </p>
+      </div>
+
+      <div>
+        <h2 id="Error_Throwing">Error Throwing</h2>
+        <p>
+          This section still needs to be written after some further code
+          refactoring.
+        </p>
+      </div>
+      <div>
+        <h2 id="Testing">Testing</h2>
+        <p>
+          There is a suite of tests already available for this application
+          inside the <code>"tests"</code> directory which, at the moment, test
+          the functionality of all non-UI code pertaining to the Main Object MVC
+          structure. This includes testing every single helper method defined in
+          the <code>"/imports/api/mainObjects/mainObjectModel"</code> file as
+          well as all client-available Meteor methods defined in the
+          <code>"/imports/api/mainObjects/mainObjectMethods"</code> file.
+        </p>
+
+        <p>
+          Currently, the tests mentioned above test the base-case usage of these
+          methods, but they also test as many edge-cases of the client-available
+          Meteor methods as I could think of.
+        </p>
+
+        <p>
+          As more parts of the application are built, more tests will be added.
+          If you build a new portion of the app, make sure to also include some
+          tests that ensure its functionality. The more thorough these tests and
+          the more situations they account for, the better.
+        </p>
+
+        <p>
+          In order to run all existing server tests once, type the command
+          <code>npm run test</code>. In order to have all server and client
+          tests running during development, in a continuos integration testing
+          fashion, type the command <code>npm run test-app</code>. You wil then
+          be able to access the app on your browser in testing mode by going to
+          port 5100.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    body {
+      background-color: white;
+      font-family: sans-serif;
+      font-size: 16px;
+      margin: 0;
+      height: 100%;
+      line-height: 150%;
+      font-weight: 500;
+    }
+
+    header {
+      position: relative;
+      background-color: green;
+      color: white;
+      text-align: left;
+      padding: 1px;
+      height: 8%;
+      line-height: 100%;
+      padding-left: 15px;
+      box-sizing: border-box;
+    }
+
+    .tiny {
+      position: absolute;
+      bottom: 0.5em;
+      right: 5px;
+      font-size: 0.9em;
+    }
+
+    .column-container {
+      display: flex;
+      box-sizing: border-box;
+    }
+
+    .column {
+      padding: 10px;
+      height: 89vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .left {
+      width: 70%;
+      background-color: #ebebeb;
+    }
+
+    #toc_container {
+      display: table;
+      font-size: 95%;
+      overflow-x: auto;
+    }
+
+    li {
+      margin: 0.5em;
+    }
+
+    .toc_title {
+      font-weight: 700;
+      text-align: center;
+    }
+
+    #toc_container li,
+    #toc_container ul,
+    #toc_container ul li {
+      list-style: outside none none !important;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    code {
+      background-color: #eee;
+      border-radius: 3px;
+      font-family: courier, monospace;
+      padding: 0 3px;
+    }
+
+    .code-block {
+      margin-top: -1em;
+      display: block;
+      box-sizing: border-box;
+      width: 75%;
+      background-color: #eee;
+      font-family: courier, monospace;
+      margin: 2px;
+    }
+
+    a {
+      color: blue;
+      text-decoration: none;
+    }
+  </style>
+</body>
+
+<script>
+  //Last updated date
+  var date = new Date(document.lastModified);
+  document.getElementById("date").innerText =
+    "Last updated on " + date.toUTCString();
+</script>

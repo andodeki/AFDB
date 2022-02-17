@@ -1,0 +1,125 @@
+<head>
+  <title>Actionable Findings Database | Actualfood</title>
+
+  <!-- Metadata -->
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, height=device-height, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+  />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!--App Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/actualfood.css" />
+  <link rel="stylesheet" href="https://use.typekit.net/epd0ywq.css" />
+
+  <!-- Scripts -->
+  <script
+    src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+  <script src="/sample.js"></script>
+
+  <!-- Changes Website theme color to actualfood theme -->
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: light)"
+  />
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: dark)"
+  />
+</head>
+
+<body>
+  <div id="app" class="main-app-window"></div>
+
+  <!-- GLOBAL STYLES -->
+  <style type="text/css">
+    BODY {
+      margin: 0;
+      overscroll-behavior: none;
+      -webkit-overscroll-behavior: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    HTML {
+      width: 100vw;
+      height: 100vh;
+    }
+    * {
+      box-sizing: border-box !important;
+      font-family: "futura-pt", -apple-system, BlinkMacSystemFont, Roboto,
+        helvetica neue, sans-serif !important;
+      font-size: 18px;
+      outline-color: #2eff5d;
+    }
+    .main-app-window {
+      background: #121212;
+    }
+
+    /*/////// SEPARATOR _ CAN DELETE*/
+    .login-error-reason {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      color: red;
+    }
+
+    .svelte-mhaxet {
+      background: none !important;
+    }
+
+    .item-listed a {
+      display: block;
+      max-width: 550px;
+      border: 1px solid #c4c4c4;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 17px;
+      padding: 20px;
+    }
+
+    .column BUTTON {
+      background: #121212 !important;
+      border-radius: 5px !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.496) !important;
+      padding: 5px 10px;
+    }
+
+    A {
+      color: #56e256;
+      text-decoration: none #54df54;
+    }
+
+    .left .field {
+      padding-top: 33px !important;
+      padding-bottom: 37px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.138);
+      padding-left: 35px !important;
+    }
+
+    .column {
+      overflow: auto;
+    }
+
+    .display-none {
+      display: none;
+    }
+  </style>
+</body>
